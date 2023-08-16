@@ -1,6 +1,7 @@
 # picow
 experiments with raspberry pico w
 
+```
 # visual code environment setup on ubuntu
 sudo apt update
 sudo apt install code
@@ -14,3 +15,4 @@ sudo apt install python3-serial
 
 visual code command to activate extension:
    MicroPico: Configure project
+```
