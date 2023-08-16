@@ -16,7 +16,7 @@ if wlan.isconnected():
     led.on()
 
 signal_strength = wlan.status('rssi')
-print("Signal Strength (RSSI):", signal_strength)
+print("Signal Strength (RSSI):", signal_strength, "dBm")
 
 print("\nAstronauts in space right now:")
 
