@@ -18,7 +18,7 @@ led.off()
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 
-print("connecting to: ", secrets.SSID)
+print("connecting to:", secrets.SSID)
 wlan.connect(secrets.SSID, secrets.PASSWORD)
 while not wlan.isconnected():
     print("  waiting for connection")
