@@ -14,5 +14,5 @@ code --install-extension paulober.pico-w-go
 sudo apt install python3-serial
 
 visual code command to activate extension:
-   MicroPico: Configure project
+   >MicroPico: Configure project
 ```
