@@ -1,3 +1,4 @@
+import sys
 import machine
 import network
 import secrets
@@ -6,22 +7,30 @@ import urequests
 from machine import Pin
 
 led = Pin("LED", Pin.OUT)
+
+led.on()
+
+# wait for user input before starting
+sys.stdin.readline()
+
 led.off()
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
-wlan.connect(secrets.SSID, secrets.PASSWORD)
 
-if wlan.isconnected():
-    led.on()
+print("connecting to: ", secrets.SSID)
+wlan.connect(secrets.SSID, secrets.PASSWORD)
+while not wlan.isconnected():
+    print("  waiting for connection")
+    time.sleep(2)
+
+led.on()
 
 signal_strength = wlan.status('rssi')
 print("Signal Strength (RSSI):", signal_strength, "dBm")
 
 print("\nAstronauts in space right now:")
-
 astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
-
 for i in range(astronauts['number']):
     print(astronauts['people'][i]['name'])
 
