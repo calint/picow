@@ -15,11 +15,17 @@ wlan.connect(secrets.SSID, secrets.PASSWORD)
 if wlan.isconnected():
     led.on()
 
+signal_strength = wlan.status('rssi')
+print("Signal Strength (RSSI):", signal_strength)
+
+print("\nAstronauts in space right now:")
+
 astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
 
 for i in range(astronauts['number']):
     print(astronauts['people'][i]['name'])
 
+print("\nTemperature:")
 sensor_temp = machine.ADC(4)
 conversion_factor = 3.3 / (65535)
 
