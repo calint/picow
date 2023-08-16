@@ -1,5 +1,4 @@
 import sys
-import machine
 import network
 import secrets
 import time
