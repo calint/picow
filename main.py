@@ -3,6 +3,7 @@ import network
 import secrets
 import time
 import urequests
+import machine
 from machine import Pin
 
 led = Pin("LED", Pin.OUT)
