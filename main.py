@@ -27,8 +27,7 @@ while not wlan.isconnected():
 led.on()
 
 print("IP:", wlan.ifconfig()[0])
-signal_strength = wlan.status('rssi')
-print("Signal Strength (RSSI):", signal_strength, "dBm")
+print("Signal Strength (RSSI):", wlan.status('rssi'), "dBm")
 
 print("\nAstronauts in space right now:")
 astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
@@ -37,10 +36,10 @@ for i in range(astronauts['number']):
 
 print("\nTemperature:")
 sensor_temp = machine.ADC(4)
-conversion_factor = 3.3 / (65535)
+conversion_factor = 3.3 / 65535
 
 while True:
     reading = sensor_temp.read_u16() * conversion_factor 
-    temperature = 27 - (reading - 0.706)/0.001721
+    temperature = 27 - (reading - 0.706) / 0.001721
     print(temperature)
     time.sleep(2)
