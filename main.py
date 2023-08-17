@@ -26,6 +26,7 @@ while not wlan.isconnected():
 
 led.on()
 
+print("IP:", wlan.ifconfig()[0])
 signal_strength = wlan.status('rssi')
 print("Signal Strength (RSSI):", signal_strength, "dBm")
 
