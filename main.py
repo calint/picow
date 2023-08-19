@@ -4,15 +4,18 @@ import secrets
 import time
 import urequests
 import machine
+import gc
 from machine import Pin
 
-led = Pin("LED", Pin.OUT)
+led=Pin("LED",Pin.OUT)
 
 led.on()
 
 # wait for user input before starting
 sys.stdin.readline()
 
+gc.collect()
+print("free mem:", gc.mem_free())
 led.off()
 
 wlan = network.WLAN(network.STA_IF)
