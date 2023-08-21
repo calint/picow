@@ -32,9 +32,10 @@ while not wlan.isconnected():
 led.on()
 
 print("\nIP:", wlan.ifconfig()[0])
-print("Signal Strength (RSSI):", wlan.status('rssi'), "dBm")
+print("signal strength (RSSI):", wlan.status('rssi'), "dBm")
 
-print("\nCurrent time from 'worldtimeapi.org' using your IP:")
+
+print("\ncurrent time from 'worldtimeapi.org' using your IP:")
 time_string = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
 # 2023-08-21T14:34:31.178704+02:00
 date, time_ = time_string.split("T")
@@ -47,7 +48,7 @@ formatted_time = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
 print(formatted_time)
 
 
-print("\nCurrent time at UTC from 'ntptime' module:")
+print("\ncurrent time at UTC from 'ntptime' module:")
 ntptime.settime()
 current_time = utime.localtime()
 formatted_time = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
@@ -57,12 +58,13 @@ formatted_time = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
 print(formatted_time)
 
 
-print("\nAstronauts in space right now:")
+print("\nastronauts in space right now:")
 astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
 for i in range(astronauts['number']):
     print(astronauts['people'][i]['name'])
 
-print("\nTemperature:")
+
+print("\ntemperature:")
 sensor_temp = machine.ADC(4)
 conversion_factor = 3.3 / 65535 # 3.3 V / 16 bit resolution
 
