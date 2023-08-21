@@ -5,6 +5,8 @@ import time
 import urequests
 import machine
 import gc
+import ntptime
+import utime
 from machine import Pin
 
 led=Pin("LED",Pin.OUT)
@@ -32,7 +34,7 @@ led.on()
 print("\nIP:", wlan.ifconfig()[0])
 print("Signal Strength (RSSI):", wlan.status('rssi'), "dBm")
 
-print("\nCurrent time using your IP:")
+print("\nCurrent time from 'worldtimeapi.org' using your IP:")
 time_string = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
 # 2023-08-21T14:34:31.178704+02:00
 date, time_ = time_string.split("T")
@@ -43,6 +45,17 @@ formatted_time = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
     int(year), int(month), int(day), int(hour), int(minute), int(second)
 )
 print(formatted_time)
+
+
+print("\nCurrent time at UTC from 'ntptime' module:")
+ntptime.settime()
+current_time = utime.localtime()
+formatted_time = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
+    current_time[0], current_time[1], current_time[2],
+    current_time[3], current_time[4], current_time[5]
+)
+print(formatted_time)
+
 
 print("\nAstronauts in space right now:")
 astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
