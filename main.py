@@ -24,9 +24,19 @@ wlan.active(True)
 
 print("\nconnecting to:", secrets.SSID)
 wlan.connect(secrets.SSID, secrets.PASSWORD)
-while not wlan.isconnected():
+while not wlan.isconnected() and wlan.status() >= 0:
     print("  waiting for connection")
     utime.sleep(2)
+
+if wlan.status() == -3:
+    raise RuntimeError("cannot connect to '" + secrets.SSID + "' because of authentication problem")
+
+if wlan.status() == -2:
+    raise RuntimeError("cannot connect to '" + secrets.SSID + "' because network not found")
+
+if wlan.status() == -1:
+    raise RuntimeError("cannot connect to '" + secrets.SSID + "' status: " + str(wlan.status()))
+
 
 led.on()
 
