@@ -10,6 +10,10 @@ import socket
 import _thread
 from machine import Pin
 
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 def webserver():
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     s = socket.socket()
@@ -110,8 +114,12 @@ celsius_degrees = 27 - (reading - 0.706) / 0.001721
 print(f"{celsius_degrees} °C\n")
 
 # running on second core replies only once. bug?
-# micropython: rp2-pico-w-20230426-v1.20.0.uf2
+# tried micropython:
+#    rp2-pico-w-20230426-v1.20.0.uf2
+#    micropython-firmware-pico-w-130623.uf2
 #_thread.start_new_thread(webserver, ())
+#while True:
+#    utime.sleep(5)
 webserver()
 
 #while True:
