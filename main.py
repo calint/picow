@@ -6,7 +6,35 @@ import machine
 import gc
 import ntptime
 import utime
+import socket
+import _thread
 from machine import Pin
+
+def webserver():
+    addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
+    s = socket.socket()
+    # re-use server socket since it is not closed when program stopped and re-run
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind(addr)
+    s.listen(1)
+    print(f"listening on {addr}")
+    while True:
+        try:
+            cl, addr = s.accept()
+            print(f"client connected from {addr}")
+            request = cl.recv(1024)
+            response = f"<pre>hello from rasberry pico w {utime.localtime()}\n{request}"
+            cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
+            cl.send(response)
+            cl.close()
+        except OSError as e:
+            if cl is not None:
+                cl.close()
+            print('connection closed')
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 led=Pin("LED",Pin.OUT)
 
@@ -45,7 +73,6 @@ led.on()
 print("\nIP:", wlan.ifconfig()[0])
 print("signal strength (RSSI):", wlan.status('rssi'), "dBm")
 
-
 print("\ncurrent time from 'worldtimeapi.org' using your IP:")
 time_string = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
 # 2023-08-21T14:34:31.178704+02:00
@@ -78,9 +105,17 @@ for i in range(astronauts['number']):
 print("\ntemperature:")
 temperature_sensor = machine.ADC(4)
 to_volts = 3.3 / 65535 # 3.3 V / 16 bit resolution
+reading = temperature_sensor.read_u16() * to_volts 
+celsius_degrees = 27 - (reading - 0.706) / 0.001721
+print(f"{celsius_degrees} °C\n")
 
-while True:
-    reading = temperature_sensor.read_u16() * to_volts 
-    celsius_degrees = 27 - (reading - 0.706) / 0.001721
-    print(f"{celsius_degrees} °C")
-    utime.sleep(2)
+# running on second core replies only once. bug?
+# micropython: rp2-pico-w-20230426-v1.20.0.uf2
+#_thread.start_new_thread(webserver, ())
+webserver()
+
+#while True:
+#    reading = temperature_sensor.read_u16() * to_volts 
+#    celsius_degrees = 27 - (reading - 0.706) / 0.001721
+#    print(f"{celsius_degrees} °C")
+#    utime.sleep(2)
