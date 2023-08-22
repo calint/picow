@@ -30,15 +30,15 @@ while not wlan.isconnected() and wlan.status() >= 0:
 
 if not wlan.isconnected():
     if wlan.status() == network.STAT_WRONG_PASSWORD:
-        raise RuntimeError("cannot connect to '" + secrets.SSID + "' because of authentication problem")
+        raise RuntimeError(f"cannot connect to '{secrets.SSID}' because of authentication problem")
 
     if wlan.status() == network.STAT_NO_AP_FOUND:
-        raise RuntimeError("cannot connect to '" + secrets.SSID + "' because network not found")
+        raise RuntimeError(f"cannot connect to '{secrets.SSID}' because the network is not found")
 
     if wlan.status() == network.STAT_CONNECT_FAIL:
-        raise RuntimeError("cannot connect to '" + secrets.SSID + "' status: STAT_CONNECT_FAIL")
+        raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: STAT_CONNECT_FAIL")
 
-    raise RuntimeError("cannot connect to '" + secrets.SSID + "' status: " + str(wlan.status()))
+    raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: {wlan.status()}")
 
 led.on()
 
