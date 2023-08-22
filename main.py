@@ -76,11 +76,11 @@ for i in range(astronauts['number']):
 
 
 print("\ntemperature:")
-sensor_temp = machine.ADC(4)
-conversion_factor = 3.3 / 65535 # 3.3 V / 16 bit resolution
+temperature_sensor = machine.ADC(4)
+to_volts = 3.3 / 65535 # 3.3 V / 16 bit resolution
 
 while True:
-    reading = sensor_temp.read_u16() * conversion_factor 
-    temperature = 27 - (reading - 0.706) / 0.001721
-    print(temperature)
+    reading = temperature_sensor.read_u16() * to_volts 
+    celsius_degrees = 27 - (reading - 0.706) / 0.001721
+    print(f"{celsius_degrees} °C")
     utime.sleep(2)
