@@ -48,7 +48,7 @@ led.on()
 sys.stdin.readline()
 
 gc.collect()
-print("free mem:", gc.mem_free())
+print("\nfree mem:", gc.mem_free())
 led.off()
 
 wlan = network.WLAN(network.STA_IF)
