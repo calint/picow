@@ -1,7 +1,6 @@
 import sys
 import network
 import secrets
-import time
 import urequests
 import machine
 import gc
@@ -27,7 +26,7 @@ print("\nconnecting to:", secrets.SSID)
 wlan.connect(secrets.SSID, secrets.PASSWORD)
 while not wlan.isconnected():
     print("  waiting for connection")
-    time.sleep(2)
+    utime.sleep(2)
 
 led.on()
 
@@ -72,4 +71,4 @@ while True:
     reading = sensor_temp.read_u16() * conversion_factor 
     temperature = 27 - (reading - 0.706) / 0.001721
     print(temperature)
-    time.sleep(2)
+    utime.sleep(2)
