@@ -28,15 +28,17 @@ while not wlan.isconnected() and wlan.status() >= 0:
     print("  waiting for connection")
     utime.sleep(2)
 
-if wlan.status() == -3:
+if wlan.status() == network.STAT_WRONG_PASSWORD:
     raise RuntimeError("cannot connect to '" + secrets.SSID + "' because of authentication problem")
 
-if wlan.status() == -2:
+if wlan.status() == network.STAT_NO_AP_FOUND:
     raise RuntimeError("cannot connect to '" + secrets.SSID + "' because network not found")
 
-if wlan.status() == -1:
+if not wlan.isconnected():
     raise RuntimeError("cannot connect to '" + secrets.SSID + "' status: " + str(wlan.status()))
 
+if wlan.status() == network.STAT_CONNECT_FAIL:
+    raise RuntimeError("cannot connect to '" + secrets.SSID + "' status: STAT_CONNECT_FAIL")
 
 led.on()
 
