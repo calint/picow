@@ -113,7 +113,7 @@ reading = temperature_sensor.read_u16() * to_volts
 celsius_degrees = 27 - (reading - 0.706) / 0.001721
 print(f"{celsius_degrees} °C\n")
 
-# running on second core replies only once. bug?
+# running webserver on second core replies only once. bug?
 # tried micropython:
 #    rp2-pico-w-20230426-v1.20.0.uf2
 #    micropython-firmware-pico-w-130623.uf2
