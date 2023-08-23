@@ -16,25 +16,26 @@ from machine import Pin
 
 def webserver():
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
-    s = socket.socket()
+    ss = socket.socket()
     # re-use server socket since it is not closed when program stopped and re-run
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind(addr)
-    s.listen(1)
+    ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    ss.bind(addr)
+    ss.listen(1)
     print(f"listening on {addr}")
+    cs = None
     while True:
         try:
-            cl, addr = s.accept()
+            cs, addr = ss.accept()
             print(f"client connected from {addr}")
-            request = cl.recv(1024)
-            response = f"<pre>hello from rasberry pico w {utime.localtime()}\n{request}"
-            cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
-            cl.send(response)
-            cl.close()
+            request = cs.recv(1024)
+            response = f"<pre>hello from rasberry pico w {utime.localtime()}\n{request.decode('utf-8')}"
+            cs.send("HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n")
+            cs.send(response)
+            cs.close()
         except OSError as e:
-            if cl is not None:
-                cl.close()
-            print('connection closed')
+            if cs is not None:
+                cs.close()
+            print(f"connection closed: {e}")
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
