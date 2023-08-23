@@ -27,10 +27,10 @@ def webserver():
         try:
             cs, addr = ss.accept()
             print(f"client connected from {addr}")
-            request = cs.recv(1024)
-            response = f"<pre>hello from rasberry pico w\n{utime.localtime()}\n\n{request.decode('utf-8')}"
+            req = cs.recv(1024)
+            resp = f"<pre>hello from rasberry pico w\n{utime.localtime()}\n\n{req.decode('utf-8')}"
             cs.send("HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n")
-            cs.send(response)
+            cs.send(resp)
             cs.close()
         except OSError as e:
             if cs is not None:
@@ -79,9 +79,9 @@ print("\nIP:", wlan.ifconfig()[0])
 print("signal strength (RSSI):", wlan.status('rssi'), "dBm")
 
 print("\ncurrent time from 'worldtimeapi.org' using your IP:")
-time_string = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
+time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
 # 2023-08-21T14:34:31.178704+02:00
-date, time_ = time_string.split("T")
+date, time_ = time_str.split("T")
 year, month, day = date.split("-")
 hour, minute, second, _ = time_.split(":")
 second = second.split(".")[0]  # remove the fractional part of seconds
@@ -111,8 +111,8 @@ print("\ntemperature:")
 temperature_sensor = machine.ADC(4)
 to_volts = 3.3 / 65535 # 3.3 V / 16 bit resolution
 reading = temperature_sensor.read_u16() * to_volts 
-celsius_degrees = 27 - (reading - 0.706) / 0.001721
-print(f"{celsius_degrees} °C\n")
+degrees_celsius = 27 - (reading - 0.706) / 0.001721
+print(f"{degrees_celsius} °C\n")
 
 # running webserver on second core replies only once. bug?
 # tried micropython:
