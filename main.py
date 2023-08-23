@@ -28,7 +28,7 @@ def webserver():
             cs, addr = ss.accept()
             print(f"client connected from {addr}")
             request = cs.recv(1024)
-            response = f"<pre>hello from rasberry pico w {utime.localtime()}\n{request.decode('utf-8')}"
+            response = f"<pre>hello from rasberry pico w\n{utime.localtime()}\n\n{request.decode('utf-8')}"
             cs.send("HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n")
             cs.send(response)
             cs.close()
