@@ -99,6 +99,7 @@ astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
 for i in range(astronauts['number']):
     print(astronauts['people'][i]['name'])
 
+
 print("\nrandom programming joke:")
 joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
 if joke_json["type"] == "single":
