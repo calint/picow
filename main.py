@@ -80,14 +80,7 @@ print("signal strength (RSSI):", wlan.status('rssi'), "dBm")
 
 print("\ncurrent time from 'worldtimeapi.org' using your IP:")
 time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
-# 2023-08-21T14:34:31.178704+02:00
-date, time_ = time_str.split("T")
-year, month, day = date.split("-")
-hour, minute, second, _ = time_.split(":")
-second = second.split(".")[0]  # remove the fractional part of seconds
-formatted_time = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
-    int(year), int(month), int(day), int(hour), int(minute), int(second)
-)
+formatted_time = time_str[0:10] + " " + time_str[11:19]
 print(formatted_time)
 
 
@@ -105,6 +98,14 @@ print("\nastronauts in space right now:")
 astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
 for i in range(astronauts['number']):
     print(astronauts['people'][i]['name'])
+
+print("\nrandom programming joke:")
+joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
+if joke_json["type"] == "single":
+    print(joke_json["joke"])
+else:
+    print(joke_json["setup"])
+    print(joke_json["delivery"])
 
 
 print("\ntemperature:")
