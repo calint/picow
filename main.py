@@ -120,6 +120,7 @@ print(f"{degrees_celsius} °C\n")
 # tried micropython:
 #    rp2-pico-w-20230426-v1.20.0.uf2
 #    micropython-firmware-pico-w-130623.uf2
+# resolution: rp2040 can only run wifi related code on core 0
 #_thread.start_new_thread(webserver, ())
 #while True:
 #    utime.sleep(5)
