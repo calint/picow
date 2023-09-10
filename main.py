@@ -10,6 +10,41 @@ import socket
 import _thread
 from machine import Pin
 
+def get_programming_joke():
+    joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
+    if joke_json["type"] == "single":
+        return joke_json["joke"]
+    else:
+        return joke_json["setup"] + "\r\n" + joke_json["delivery"]
+
+def get_astronauts_in_space_right_now():
+    astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
+    resp = ""
+    for i in range(astronauts['number']):
+        resp += astronauts['people'][i]['name'] + "\r\n"
+    return resp
+
+def get_current_date_time_base_on_ip():
+    time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
+    return time_str[0:10] + " " + time_str[11:19]
+
+def get_current_date_time_at_utc_using_ntp():
+    ntptime.settime()
+    current_time = utime.localtime()
+    return "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
+        current_time[0], current_time[1], current_time[2],
+        current_time[3], current_time[4], current_time[5]
+    )
+
+def get_temperature_in_celsius():
+    temperature_sensor = machine.ADC(4)
+    to_volts = 3.3 / 65535 # 3.3 V / 16 bit resolution
+    reading = temperature_sensor.read_u16() * to_volts 
+    return round(27 - (reading - 0.706) / 0.001721, 1)
+
+def get_wifi_status():
+    return f"IP: {wlan.ifconfig()[0]}\r\nsignal strength (RSSI): {wlan.status('rssi')} dBm"
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -28,8 +63,31 @@ def webserver():
             cs, addr = ss.accept()
             print(f"client connected from {addr}")
             req = cs.recv(1024)
-            resp = f"<pre>hello from rasberry pico w\n{utime.localtime()}\n\n{req.decode('utf-8')}"
-            cs.send("HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n")
+            resp = f"""<pre>hello from rasberry pico w
+
+{req.decode('utf-8')}
+current time based on ip:
+{get_current_date_time_base_on_ip()}
+
+current time at utc:
+{get_current_date_time_at_utc_using_ntp()}
+
+random programming joke:
+{get_programming_joke()}
+
+astronauts in space right now:
+{get_astronauts_in_space_right_now()}
+heap:
+free mem: {gc.mem_free()}
+
+temperature:
+{get_temperature_in_celsius()} °C
+
+wifi status:
+{get_wifi_status()}
+"""
+            
+            cs.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
             cs.send(resp)
             cs.close()
         except OSError as e:
@@ -75,59 +133,23 @@ if not wlan.isconnected():
 
 led.on()
 
-print("\nIP:", wlan.ifconfig()[0])
-print("signal strength (RSSI):", wlan.status('rssi'), "dBm")
+print("\nwifi status:")
+print(get_wifi_status())
 
 print("\ncurrent time from 'worldtimeapi.org' using your IP:")
-time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
-formatted_time = time_str[0:10] + " " + time_str[11:19]
-print(formatted_time)
-
+print(get_current_date_time_base_on_ip())
 
 print("\ncurrent time at UTC from 'ntptime' module:")
-ntptime.settime()
-current_time = utime.localtime()
-formatted_time = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
-    current_time[0], current_time[1], current_time[2],
-    current_time[3], current_time[4], current_time[5]
-)
-print(formatted_time)
-
+print(get_current_date_time_at_utc_using_ntp())
 
 print("\nastronauts in space right now:")
-astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
-for i in range(astronauts['number']):
-    print(astronauts['people'][i]['name'])
-
+print(get_astronauts_in_space_right_now(), end="")
 
 print("\nrandom programming joke:")
-joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
-if joke_json["type"] == "single":
-    print(joke_json["joke"])
-else:
-    print(joke_json["setup"])
-    print(joke_json["delivery"])
-
+print(get_programming_joke())
 
 print("\ntemperature:")
-temperature_sensor = machine.ADC(4)
-to_volts = 3.3 / 65535 # 3.3 V / 16 bit resolution
-reading = temperature_sensor.read_u16() * to_volts 
-degrees_celsius = 27 - (reading - 0.706) / 0.001721
-print(f"{degrees_celsius} °C\n")
+print(f"{get_temperature_in_celsius()} °C\n")
 
-# running webserver on second core replies only once. bug?
-# tried micropython:
-#    rp2-pico-w-20230426-v1.20.0.uf2
-#    micropython-firmware-pico-w-130623.uf2
-# resolution: rp2040 can only run wifi related code on core 0
-#_thread.start_new_thread(webserver, ())
-#while True:
-#    utime.sleep(5)
+# note: rp2040 can only run wifi related code on core 0
 webserver()
-
-#while True:
-#    reading = temperature_sensor.read_u16() * to_volts 
-#    celsius_degrees = 27 - (reading - 0.706) / 0.001721
-#    print(f"{celsius_degrees} °C")
-#    utime.sleep(2)
