@@ -22,7 +22,7 @@ def get_astronauts_in_space_right_now():
     resp = ""
     for i in range(astronauts['number']):
         resp += astronauts['people'][i]['name'] + "\r\n"
-    return resp
+    return resp.strip()
 
 def get_current_date_time_based_on_ip():
     time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
@@ -77,7 +77,7 @@ random programming joke:
 {get_programming_joke()}
 
 astronauts in space right now:
-{get_astronauts_in_space_right_now().strip()}
+{get_astronauts_in_space_right_now()}
 
 temperature:
 {get_temperature_in_celsius()} °C
@@ -146,7 +146,7 @@ print("\ncurrent time at UTC from 'ntptime' module:")
 print(get_current_date_time_at_utc_using_ntp())
 
 print("\nastronauts in space right now:")
-print(get_astronauts_in_space_right_now(), end="")
+print(get_astronauts_in_space_right_now())
 
 print("\nrandom programming joke:")
 print(get_programming_joke())
@@ -154,5 +154,5 @@ print(get_programming_joke())
 print("\ntemperature:")
 print(f"{get_temperature_in_celsius()} °C\n")
 
-# note: rp2040 can only run wifi related code on core 0
+# note: rp2040 can only run wifi related code on core 0?
 webserver()
