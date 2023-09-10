@@ -65,8 +65,7 @@ def webserver():
             req = cs.recv(1024)
             resp = f"""<pre>hello from rasberry pico w
 
-{req.decode('utf-8')}
-current time based on ip:
+{req.decode('utf-8')}current time based on ip:
 {get_current_date_time_based_on_ip()}
 
 current time at utc:
@@ -78,6 +77,7 @@ random programming joke:
 astronauts in space right now:
 {get_astronauts_in_space_right_now()}
 heap:
+allocated: {gc.mem_alloc()} B
 free mem: {gc.mem_free()} B
 
 temperature:
