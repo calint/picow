@@ -1,6 +1,5 @@
 import sys
 import network
-import secrets
 import urequests
 import machine
 import gc
@@ -9,6 +8,8 @@ import utime
 import socket
 import _thread
 from machine import Pin
+
+import secrets
 
 def get_programming_joke():
     joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
@@ -26,7 +27,7 @@ def get_astronauts_in_space_right_now():
 
 def get_current_date_time_based_on_ip():
     time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
-    return time_str[0:10] + " " + time_str[11:19]
+    return f"{time_str[0:10]} {time_str[11:19]}"
 
 def get_current_date_time_at_utc_using_ntp():
     ntptime.settime()
@@ -112,6 +113,7 @@ sys.stdin.readline()
 gc.collect()
 print("allocated:", gc.mem_alloc(), "B")
 print("free mem:", gc.mem_free(), "B")
+
 led.off()
 
 wlan = network.WLAN(network.STA_IF)
@@ -134,6 +136,8 @@ if not wlan.isconnected():
         raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: STAT_CONNECT_FAIL")
 
     raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: {wlan.status()}")
+
+print("connected")
 
 led.on()
 
