@@ -24,7 +24,7 @@ def get_astronauts_in_space_right_now():
         resp += astronauts['people'][i]['name'] + "\r\n"
     return resp
 
-def get_current_date_time_base_on_ip():
+def get_current_date_time_based_on_ip():
     time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
     return time_str[0:10] + " " + time_str[11:19]
 
@@ -67,7 +67,7 @@ def webserver():
 
 {req.decode('utf-8')}
 current time based on ip:
-{get_current_date_time_base_on_ip()}
+{get_current_date_time_based_on_ip()}
 
 current time at utc:
 {get_current_date_time_at_utc_using_ntp()}
@@ -78,7 +78,7 @@ random programming joke:
 astronauts in space right now:
 {get_astronauts_in_space_right_now()}
 heap:
-free mem: {gc.mem_free()}
+free mem: {gc.mem_free()} B
 
 temperature:
 {get_temperature_in_celsius()} °C
@@ -107,7 +107,7 @@ led.on()
 sys.stdin.readline()
 
 gc.collect()
-print("\nfree mem:", gc.mem_free())
+print("\nfree mem:", gc.mem_free(), "B")
 led.off()
 
 wlan = network.WLAN(network.STA_IF)
@@ -137,7 +137,7 @@ print("\nwifi status:")
 print(get_wifi_status())
 
 print("\ncurrent time from 'worldtimeapi.org' using your IP:")
-print(get_current_date_time_base_on_ip())
+print(get_current_date_time_based_on_ip())
 
 print("\ncurrent time at UTC from 'ntptime' module:")
 print(get_current_date_time_at_utc_using_ntp())
