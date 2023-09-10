@@ -65,7 +65,9 @@ def webserver():
             req = cs.recv(1024)
             resp = f"""<pre>hello from rasberry pico w
 
-{req.decode('utf-8')}current time based on ip:
+{req.decode('utf-8').strip()}
+
+current time based on ip:
 {get_current_date_time_based_on_ip()}
 
 current time at utc:
@@ -75,16 +77,17 @@ random programming joke:
 {get_programming_joke()}
 
 astronauts in space right now:
-{get_astronauts_in_space_right_now()}
-heap:
-allocated: {gc.mem_alloc()} B
-free mem: {gc.mem_free()} B
+{get_astronauts_in_space_right_now().strip()}
 
 temperature:
 {get_temperature_in_celsius()} °C
 
 wifi status:
 {get_wifi_status()}
+
+heap:
+allocated: {gc.mem_alloc()} B
+free mem: {gc.mem_free()} B
 """
             
             cs.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
