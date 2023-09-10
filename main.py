@@ -43,7 +43,7 @@ def get_temperature_in_celsius():
     return round(27 - (reading - 0.706) / 0.001721, 1)
 
 def get_wifi_status():
-    return f"IP: {wlan.ifconfig()[0]}\r\nsignal strength (RSSI): {wlan.status('rssi')} dBm"
+    return f"{wlan.ifconfig()[0]}  ({wlan.status('rssi')} dBm)"
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
