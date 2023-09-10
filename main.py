@@ -56,7 +56,7 @@ def webserver():
     ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     ss.bind(addr)
     ss.listen(1)
-    print(f"listening on {addr}")
+    print(f"webserver open at {wlan.ifconfig()[0]} on port 80")
     cs = None
     while True:
         try:
@@ -89,11 +89,11 @@ heap:
 allocated: {gc.mem_alloc()} B
 free mem: {gc.mem_free()} B
 """
-            
+
             cs.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
             cs.send(resp)
             cs.close()
-        except OSError as e:
+        except Exception as e:
             if cs is not None:
                 cs.close()
             print(f"connection closed: {e}")
@@ -110,7 +110,8 @@ led.on()
 sys.stdin.readline()
 
 gc.collect()
-print("\nfree mem:", gc.mem_free(), "B")
+print("allocated:", gc.mem_alloc(), "B")
+print("free mem:", gc.mem_free(), "B")
 led.off()
 
 wlan = network.WLAN(network.STA_IF)
