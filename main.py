@@ -82,6 +82,30 @@ random programming joke:
     sock.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
     sock.send(resp)
 
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def webserver_led(path: str, query: str, headers: list[str], sock: socket.socket) -> None:
+    led_on = "checked" if "led=1" in query else ""
+    if led_on != "":
+        Pin("LED",Pin.OUT).on()
+    else:
+        Pin("LED",Pin.OUT).off()
+
+    resp = f"""<!DOCTYPE html><title>LED</title>
+<form>
+    <input name=led type=checkbox value=1 {led_on}> LED
+    <input type=submit value=apply>
+</form>
+"""
+    sock.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
+    sock.send(resp)
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 def webserver() -> None:
     addr = socket.getaddrinfo("0.0.0.0", 80)[0][-1]
     server_sock = socket.socket()
@@ -104,6 +128,8 @@ def webserver() -> None:
 
             if path == "/":
                 webserver_root(path, query, headers, sock)
+            elif path == "/led":
+                webserver_led(path, query, headers, sock)
             else:
                 sock.send("HTTP/1.0 404 Not Found\r\n\r\npath '" + path + "' not found")
 
