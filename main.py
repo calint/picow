@@ -9,6 +9,7 @@ import socket
 import _thread
 from machine import Pin
 import secrets
+import uos
 
 def get_programming_joke() -> str:
     joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
@@ -197,6 +198,21 @@ print(get_programming_joke())
 
 print("\ntemperature:")
 print(f"{get_temperature_in_celsius()} °C")
+
+try:
+    file = open("prefs.txt", "r+")
+    contents = file.read()
+    boot_count = int(contents)
+except OSError:
+    file = open("prefs.txt", "w+")
+    contents = ""
+    boot_count = 1
+
+print("\nboot count:", boot_count)
+boot_count += 1
+file.seek(0)
+file.write(str(boot_count))
+file.close()
 
 print("-------------------------------------------------")
 # note: rp2040 can only run wifi related code on core 0?
