@@ -88,10 +88,8 @@ random programming joke:
 
 def webserver_led(path: str, query: str, headers: list[str], sock: socket.socket) -> None:
     led_on = "checked" if "led=1" in query else ""
-    if led_on != "":
-        Pin("LED",Pin.OUT).on()
-    else:
-        Pin("LED",Pin.OUT).off()
+    led_pin = Pin("LED",Pin.OUT)
+    led_pin.on() if led_on !="" else led_pin.off()
 
     resp = f"""<!DOCTYPE html><title>LED</title>
 <form>
