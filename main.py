@@ -8,28 +8,27 @@ import utime
 import socket
 import _thread
 from machine import Pin
-
 import secrets
 
-def get_programming_joke():
+def get_programming_joke() -> str:
     joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
     if joke_json["type"] == "single":
         return joke_json["joke"]
     else:
         return joke_json["setup"] + "\n" + joke_json["delivery"]
 
-def get_astronauts_in_space_right_now():
+def get_astronauts_in_space_right_now() -> str:
     astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
     resp = ""
     for i in range(astronauts["number"]):
         resp += astronauts["people"][i]["name"] + "\n"
     return resp.strip()
 
-def get_current_date_time_based_on_ip():
+def get_current_date_time_based_on_ip() -> str:
     time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
     return f"{time_str[0:10]} {time_str[11:19]}"
 
-def get_current_date_time_at_utc_using_ntp():
+def get_current_date_time_at_utc_using_ntp() -> str:
     ntptime.settime()
     current_time = utime.localtime()
     return "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
@@ -37,20 +36,20 @@ def get_current_date_time_at_utc_using_ntp():
         current_time[3], current_time[4], current_time[5]
     )
 
-def get_temperature_in_celsius():
+def get_temperature_in_celsius() -> str:
     temperature_sensor = machine.ADC(4)
     to_volts = 3.3 / 65535 # 3.3 V / 16 bit resolution
     reading = temperature_sensor.read_u16() * to_volts 
     return round(27 - (reading - 0.706) / 0.001721, 1)
 
-def get_wifi_status():
+def get_wifi_status() -> str:
     return f"{wlan.ifconfig()[0]}  ({wlan.status('rssi')} dBm)"
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def webserver_root(path, query, headers, sock):
+def webserver_root(path: str, query: str, headers: list[str], sock: socket.socket) -> None:
     resp = f"""<!DOCTYPE html><pre>hello from rasberry pico w
 
 path: {path}
@@ -83,7 +82,7 @@ random programming joke:
     sock.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
     sock.send(resp)
 
-def webserver():
+def webserver() -> None:
     addr = socket.getaddrinfo("0.0.0.0", 80)[0][-1]
     ss = socket.socket()
     # re-use server socket since it is not closed when program stopped and re-run
