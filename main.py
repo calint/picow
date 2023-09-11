@@ -44,7 +44,7 @@ def get_temperature_in_celsius() -> float:
     return round(27 - (reading - 0.706) / 0.001721, 1)
 
 def get_wifi_status() -> str:
-    return f"{wlan.ifconfig()[0]}  ({wlan.status('rssi')} dBm)"
+    return f"{wlan.ifconfig()[0]} ({wlan.status('rssi')} dBm)"
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -156,14 +156,15 @@ print("free mem:", gc.mem_free(), "B")
 
 led.off()
 
+#-----------------------------------------------------------------------------
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 
-print("\nconnecting to:", secrets.SSID)
+print(f"\nconnecting to '{secrets.SSID}' using '{secrets.PASSWORD}'")
 wlan.connect(secrets.SSID, secrets.PASSWORD)
 while not wlan.isconnected() and wlan.status() >= 0:
-    print("  waiting for connection")
-    utime.sleep(2)
+    print(".", end="")
+    utime.sleep_ms(500)
 
 if not wlan.isconnected():
     if wlan.status() == network.STAT_WRONG_PASSWORD:
@@ -177,7 +178,8 @@ if not wlan.isconnected():
 
     raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: {wlan.status()}")
 
-print("connected")
+print()
+#-----------------------------------------------------------------------------
 
 led.on()
 
