@@ -16,13 +16,13 @@ def get_programming_joke():
     if joke_json["type"] == "single":
         return joke_json["joke"]
     else:
-        return joke_json["setup"] + "\r\n" + joke_json["delivery"]
+        return joke_json["setup"] + "\n" + joke_json["delivery"]
 
 def get_astronauts_in_space_right_now():
     astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
     resp = ""
     for i in range(astronauts['number']):
-        resp += astronauts['people'][i]['name'] + "\r\n"
+        resp += astronauts['people'][i]['name'] + "\n"
     return resp.strip()
 
 def get_current_date_time_based_on_ip():
@@ -50,6 +50,39 @@ def get_wifi_status():
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
+def webserver_root(path, query, headers, sock):
+    resp = f"""<!DOCTYPE html><pre>hello from rasberry pico w
+
+path: {path}
+query: {query}
+headers: {headers}
+
+wifi status:
+{get_wifi_status()}
+
+temperature:
+{get_temperature_in_celsius()} °C
+
+heap:
+allocated: {gc.mem_alloc()} B
+free mem: {gc.mem_free()} B
+
+current time at utc:
+{get_current_date_time_at_utc_using_ntp()}
+
+current time based on ip:
+{get_current_date_time_based_on_ip()}
+
+astronauts in space right now:
+{get_astronauts_in_space_right_now()}
+
+random programming joke:
+{get_programming_joke()}
+
+"""
+    sock.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
+    sock.send(resp)
+
 def webserver():
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     ss = socket.socket()
@@ -63,36 +96,18 @@ def webserver():
         try:
             cs, addr = ss.accept()
             print(f"client connected from {addr}")
-            req = cs.recv(1024)
-            resp = f"""<pre>hello from rasberry pico w
+            req = cs.recv(1024).decode('utf-8')
+            req_lines = req.splitlines()
+            req_first_line = req_lines[0]
+            _, uri, _ = req_first_line.split(" ", 2)
+            path, query = uri.split("?", 1) if "?" in uri else (uri, "")
+            headers = req_lines[1:-1]
 
-{req.decode('utf-8').strip()}
+            if path == "/":
+                webserver_root(path, query, headers, cs)
+            else:
+                cs.send("HTTP/1.0 404 Not Found\r\n\r\npath '" + path + "' not found")
 
-current time based on ip:
-{get_current_date_time_based_on_ip()}
-
-current time at utc:
-{get_current_date_time_at_utc_using_ntp()}
-
-random programming joke:
-{get_programming_joke()}
-
-astronauts in space right now:
-{get_astronauts_in_space_right_now()}
-
-temperature:
-{get_temperature_in_celsius()} °C
-
-wifi status:
-{get_wifi_status()}
-
-heap:
-allocated: {gc.mem_alloc()} B
-free mem: {gc.mem_free()} B
-"""
-
-            cs.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
-            cs.send(resp)
             cs.close()
         except Exception as e:
             if cs is not None:
@@ -157,7 +172,9 @@ print("\nrandom programming joke:")
 print(get_programming_joke())
 
 print("\ntemperature:")
-print(f"{get_temperature_in_celsius()} °C\n")
+print(f"{get_temperature_in_celsius()} °C")
 
+print("-------------------------------------------------")
 # note: rp2040 can only run wifi related code on core 0?
 webserver()
+
