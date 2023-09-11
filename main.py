@@ -94,7 +94,7 @@ def webserver_led(path: str, query: str, headers: list[str], sock: socket.socket
     resp = f"""<!DOCTYPE html><title>LED</title>
 <form>
     <input name=led type=checkbox value=1 {led_on}> LED
-    <input type=submit value=apply>
+    <button type=submit>Apply</button>
 </form>
 """
     sock.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
