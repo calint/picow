@@ -36,7 +36,7 @@ def get_current_date_time_at_utc_using_ntp() -> str:
         current_time[3], current_time[4], current_time[5]
     )
 
-def get_temperature_in_celsius() -> str:
+def get_temperature_in_celsius() -> float:
     temperature_sensor = machine.ADC(4)
     to_volts = 3.3 / 65535 # 3.3 V / 16 bit resolution
     reading = temperature_sensor.read_u16() * to_volts 
@@ -84,18 +84,18 @@ random programming joke:
 
 def webserver() -> None:
     addr = socket.getaddrinfo("0.0.0.0", 80)[0][-1]
-    ss = socket.socket()
+    server_sock = socket.socket()
     # re-use server socket since it is not closed when program stopped and re-run
-    ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    ss.bind(addr)
-    ss.listen(1)
+    server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_sock.bind(addr)
+    server_sock.listen(1)
     print(f"webserver open at {wlan.ifconfig()[0]} on port 80")
-    cs = None
+    sock = None
     while True:
         try:
-            cs, addr = ss.accept()
+            sock, addr = server_sock.accept()
             print(f"client connected from {addr}")
-            req = cs.recv(1024).decode("utf-8")
+            req = sock.recv(1024).decode("utf-8")
             req_lines = req.splitlines()
             req_first_line = req_lines[0]
             _, uri, _ = req_first_line.split(" ", 2)
@@ -103,14 +103,14 @@ def webserver() -> None:
             headers = req_lines[1:-1]
 
             if path == "/":
-                webserver_root(path, query, headers, cs)
+                webserver_root(path, query, headers, sock)
             else:
-                cs.send("HTTP/1.0 404 Not Found\r\n\r\npath '" + path + "' not found")
+                sock.send("HTTP/1.0 404 Not Found\r\n\r\npath '" + path + "' not found")
 
-            cs.close()
+            sock.close()
         except Exception as e:
-            if cs is not None:
-                cs.close()
+            if sock is not None:
+                sock.close()
             print(f"connection closed: {e}")
 
 #------------------------------------------------------------------------------
