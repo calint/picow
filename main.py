@@ -93,7 +93,7 @@ random programming joke:
 
 def webserver_led(path: str, query: str, headers: list[str], sock: socket.socket) -> None:
     led_on = "checked" if "led=1" in query else ""
-    led_pin = Pin("LED",Pin.OUT)
+    led_pin = Pin("LED", Pin.OUT)
     led_pin.on() if led_on !="" else led_pin.off()
 
     resp = f"""<!DOCTYPE html><title>LED</title>
@@ -177,7 +177,7 @@ def connect_wifi(wlan : network.WLAN) -> None:
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-led=Pin("LED",Pin.OUT)
+led=Pin("LED", Pin.OUT)
 
 led.on()
 
