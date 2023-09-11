@@ -6,10 +6,10 @@ import gc
 import ntptime
 import utime
 import socket
-import _thread
-from machine import Pin
-import secrets
 import uos
+from machine import Pin
+
+import secrets
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
