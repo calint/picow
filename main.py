@@ -129,7 +129,7 @@ def webserver() -> None:
             elif path == "/led":
                 webserver_led(path, query, headers, sock)
             else:
-                sock.send("HTTP/1.0 404 Not Found\r\n\r\npath '" + path + "' not found")
+                sock.send("HTTP/1.0 404\r\n\r\npath '" + path + "' not found")
 
             sock.close()
 
