@@ -21,8 +21,8 @@ def get_programming_joke():
 def get_astronauts_in_space_right_now():
     astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
     resp = ""
-    for i in range(astronauts['number']):
-        resp += astronauts['people'][i]['name'] + "\n"
+    for i in range(astronauts["number"]):
+        resp += astronauts["people"][i]["name"] + "\n"
     return resp.strip()
 
 def get_current_date_time_based_on_ip():
@@ -44,7 +44,7 @@ def get_temperature_in_celsius():
     return round(27 - (reading - 0.706) / 0.001721, 1)
 
 def get_wifi_status():
-    return f"{wlan.ifconfig()[0]}  ({wlan.status('rssi')} dBm)"
+    return f"{wlan.ifconfig()[0]}  ({wlan.status("rssi")} dBm)"
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ random programming joke:
     sock.send(resp)
 
 def webserver():
-    addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
+    addr = socket.getaddrinfo("0.0.0.0", 80)[0][-1]
     ss = socket.socket()
     # re-use server socket since it is not closed when program stopped and re-run
     ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -96,7 +96,7 @@ def webserver():
         try:
             cs, addr = ss.accept()
             print(f"client connected from {addr}")
-            req = cs.recv(1024).decode('utf-8')
+            req = cs.recv(1024).decode("utf-8")
             req_lines = req.splitlines()
             req_first_line = req_lines[0]
             _, uri, _ = req_first_line.split(" ", 2)
