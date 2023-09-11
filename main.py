@@ -118,11 +118,11 @@ def webserver() -> None:
             sock, addr = server_sock.accept()
             req = sock.recv(1024).decode("utf-8")
             req_lines = req.splitlines()
-            req_first_line = req_lines[0]
-            _, uri, _ = req_first_line.split(" ", 2)
+            _, uri, _ = req_lines[0].split(" ", 2)
             path, query = uri.split("?", 1) if "?" in uri else (uri, "")
             headers = req_lines[1:-1]
-            print(f"client connected from {addr} requesting '{path}' with query '{query}'")
+
+            print(f"client at '{addr[0]}' requests '{path}' with query '{query}'")
 
             if path == "/":
                 webserver_root(path, query, headers, sock)
@@ -132,6 +132,7 @@ def webserver() -> None:
                 sock.send("HTTP/1.0 404 Not Found\r\n\r\npath '" + path + "' not found")
 
             sock.close()
+
         except Exception as e:
             if sock is not None:
                 sock.close()
