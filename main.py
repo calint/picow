@@ -11,6 +11,10 @@ from machine import Pin
 import secrets
 import uos
 
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 def get_random_programming_joke() -> str:
     joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
     if joke_json["type"] == "single":
@@ -143,6 +147,36 @@ def webserver() -> None:
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
+def connect_wifi(wlan : network.WLAN) -> None:
+    wlan.active(True)
+
+    print(f"\nconnecting to '{secrets.SSID}' using '{secrets.PASSWORD}'")
+    wlan.connect(secrets.SSID, secrets.PASSWORD)
+    waited = False
+    while not wlan.isconnected() and wlan.status() >= 0:
+        print(".", end="")
+        waited = True
+        utime.sleep_ms(500)
+
+    if not wlan.isconnected():
+        if wlan.status() == network.STAT_WRONG_PASSWORD:
+            raise RuntimeError(f"cannot connect to '{secrets.SSID}' because of authentication problem")
+
+        if wlan.status() == network.STAT_NO_AP_FOUND:
+            raise RuntimeError(f"cannot connect to '{secrets.SSID}' because the network is not found")
+
+        if wlan.status() == network.STAT_CONNECT_FAIL:
+            raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: STAT_CONNECT_FAIL")
+
+        raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: {wlan.status()}")
+
+    if waited:
+        print()
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 led=Pin("LED",Pin.OUT)
 
 led.on()
@@ -156,30 +190,9 @@ print("free mem:", gc.mem_free(), "B")
 
 led.off()
 
-#-----------------------------------------------------------------------------
 wlan = network.WLAN(network.STA_IF)
-wlan.active(True)
 
-print(f"\nconnecting to '{secrets.SSID}' using '{secrets.PASSWORD}'")
-wlan.connect(secrets.SSID, secrets.PASSWORD)
-while not wlan.isconnected() and wlan.status() >= 0:
-    print(".", end="")
-    utime.sleep_ms(500)
-
-if not wlan.isconnected():
-    if wlan.status() == network.STAT_WRONG_PASSWORD:
-        raise RuntimeError(f"cannot connect to '{secrets.SSID}' because of authentication problem")
-
-    if wlan.status() == network.STAT_NO_AP_FOUND:
-        raise RuntimeError(f"cannot connect to '{secrets.SSID}' because the network is not found")
-
-    if wlan.status() == network.STAT_CONNECT_FAIL:
-        raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: STAT_CONNECT_FAIL")
-
-    raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: {wlan.status()}")
-
-print()
-#-----------------------------------------------------------------------------
+connect_wifi(wlan)
 
 led.on()
 
@@ -215,6 +228,7 @@ file.write(str(boot_count))
 file.close()
 
 print("-------------------------------------------------")
+
 # note: rp2040 can only run wifi related code on core 0?
 webserver()
 
