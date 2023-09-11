@@ -11,7 +11,7 @@ from machine import Pin
 import secrets
 import uos
 
-def get_programming_joke() -> str:
+def get_random_programming_joke() -> str:
     joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
     if joke_json["type"] == "single":
         return joke_json["joke"]
@@ -25,11 +25,11 @@ def get_astronauts_in_space_right_now() -> str:
         resp += astronauts["people"][i]["name"] + "\n"
     return resp.strip()
 
-def get_current_date_time_based_on_ip() -> str:
+def get_date_time_based_on_ip() -> str:
     time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
     return f"{time_str[0:10]} {time_str[11:19]}"
 
-def get_current_date_time_at_utc_using_ntp() -> str:
+def get_date_time_at_utc_using_ntp() -> str:
     ntptime.settime()
     current_time = utime.localtime()
     return "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
@@ -68,16 +68,16 @@ allocated: {gc.mem_alloc()} B
 free mem: {gc.mem_free()} B
 
 current time at utc:
-{get_current_date_time_at_utc_using_ntp()}
+{get_date_time_at_utc_using_ntp()}
 
 current time based on ip:
-{get_current_date_time_based_on_ip()}
+{get_date_time_based_on_ip()}
 
 astronauts in space right now:
 {get_astronauts_in_space_right_now()}
 
 random programming joke:
-{get_programming_joke()}
+{get_random_programming_joke()}
 
 """
     sock.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
@@ -185,16 +185,16 @@ print("\nwifi status:")
 print(get_wifi_status())
 
 print("\ncurrent time from 'worldtimeapi.org' using your IP:")
-print(get_current_date_time_based_on_ip())
+print(get_date_time_based_on_ip())
 
 print("\ncurrent time at UTC from 'ntptime' module:")
-print(get_current_date_time_at_utc_using_ntp())
+print(get_date_time_at_utc_using_ntp())
 
 print("\nastronauts in space right now:")
 print(get_astronauts_in_space_right_now())
 
 print("\nrandom programming joke:")
-print(get_programming_joke())
+print(get_random_programming_joke())
 
 print("\ntemperature:")
 print(f"{get_temperature_in_celsius()} °C")
