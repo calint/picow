@@ -116,13 +116,13 @@ def webserver() -> None:
     while True:
         try:
             sock, addr = server_sock.accept()
-            print(f"client connected from {addr}")
             req = sock.recv(1024).decode("utf-8")
             req_lines = req.splitlines()
             req_first_line = req_lines[0]
             _, uri, _ = req_first_line.split(" ", 2)
             path, query = uri.split("?", 1) if "?" in uri else (uri, "")
             headers = req_lines[1:-1]
+            print(f"client connected from {addr} requesting '{path}' with query '{query}'")
 
             if path == "/":
                 webserver_root(path, query, headers, sock)
