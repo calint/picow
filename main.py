@@ -201,11 +201,9 @@ print(f"{get_temperature_in_celsius()} °C")
 
 try:
     file = open("prefs.txt", "r+")
-    contents = file.read()
-    boot_count = int(contents)
+    boot_count = int(file.read())
 except OSError:
     file = open("prefs.txt", "w+")
-    contents = ""
     boot_count = 1
 
 print("\nboot count:", boot_count)
