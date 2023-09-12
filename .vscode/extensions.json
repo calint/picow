@@ -1,8 +1,10 @@
 {
     "recommendations": [
         "ms-python.python",
-        "visualstudioexptteam.vscodeintellicode",
         "ms-python.vscode-pylance",
+        "ms-python.mypy-type-checker",
+        "ms-python.isort",
+        "visualstudioexptteam.vscodeintellicode",
         "paulober.pico-w-go"
     ]
 }
