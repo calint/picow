@@ -13,6 +13,7 @@ code --install-extension ms-python.mypy-type-checker
 code --install-extension ms-python.isort
 code --install-extension visualstudioexptteam.vscodeintellicode
 code --install-extension paulober.pico-w-go
+code --install-extension charliermarsh.ruff
 
 visual code command to activate extension for project:
    >MicroPico: Configure project
