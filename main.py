@@ -8,11 +8,12 @@ import utime
 import socket
 from machine import Pin
 
-import secrets
+import wifisecrets
 
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+
 
 def get_random_programming_joke() -> str:
     joke_json = urequests.get("https://v2.jokeapi.dev/joke/Programming").json()
@@ -21,6 +22,7 @@ def get_random_programming_joke() -> str:
     else:
         return joke_json["setup"] + "\n" + joke_json["delivery"]
 
+
 def get_astronauts_in_space_right_now() -> str:
     astronauts = urequests.get("http://api.open-notify.org/astros.json").json()
     resp = ""
@@ -28,34 +30,44 @@ def get_astronauts_in_space_right_now() -> str:
         resp += astronauts["people"][i]["name"] + "\n"
     return resp.strip()
 
+
 def get_date_time_based_on_ip() -> str:
     time_str = urequests.get("http://worldtimeapi.org/api/ip").json()["datetime"]
     return f"{time_str[0:10]} {time_str[11:19]}"
+
 
 def get_date_time_at_utc_using_ntp() -> str:
     ntptime.settime()
     current_time = utime.localtime()
     return "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
-        current_time[0], current_time[1], current_time[2],
-        current_time[3], current_time[4], current_time[5]
+        current_time[0],
+        current_time[1],
+        current_time[2],
+        current_time[3],
+        current_time[4],
+        current_time[5],
     )
+
 
 def get_temperature_in_celsius() -> float:
     temperature_sensor = machine.ADC(4)
-    to_volts = 3.3 / 65535 # 3.3 V / 16 bit resolution
-    reading = temperature_sensor.read_u16() * to_volts 
+    to_volts = 3.3 / 65535  # 3.3 V / 16 bit resolution
+    reading = temperature_sensor.read_u16() * to_volts
     return round(27 - (reading - 0.706) / 0.001721, 1)
+
 
 def get_wifi_status() -> str:
     return f"{wlan.ifconfig()[0]} ({wlan.status('rssi')} dBm)"
 
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
 
-def webserver_root(path: str, query: str, headers: list[str],
-                   sock: socket.socket) -> None:
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
+
+def webserver_root(
+    path: str, query: str, headers: list[str], sock: socket.socket
+) -> None:
     resp = f"""<!DOCTYPE html><pre>hello from rasberry pico w
 
 path: {path}
@@ -88,15 +100,17 @@ random programming joke:
     sock.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
     sock.send(resp)
 
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
 
-def webserver_led(path: str, query: str, headers: list[str],
-                  sock: socket.socket) -> None:
-    
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+
+
+def webserver_led(
+    path: str, query: str, headers: list[str], sock: socket.socket
+) -> None:
     led_on = "checked" if "led=1" in query else ""
-    led.on() if led_on !="" else led.off()
+    led.on() if led_on != "" else led.off()
 
     resp = f"""<!DOCTYPE html><title>LED</title>
 <form>
@@ -107,9 +121,11 @@ def webserver_led(path: str, query: str, headers: list[str],
     sock.send("HTTP/1.0 200 OK\r\nContent-type: text/html; charset=utf-8\r\n\r\n")
     sock.send(resp)
 
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+
 
 def webserver() -> None:
     addr = socket.getaddrinfo("0.0.0.0", 80)[0][-1]
@@ -145,15 +161,17 @@ def webserver() -> None:
                 sock.close()
             print(f"connection closed: {e}")
 
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
 
-def connect_wifi(wlan : network.WLAN) -> None:
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+
+
+def connect_wifi(wlan: network.WLAN) -> None:
     wlan.active(True)
 
-    print(f"\nconnecting to '{secrets.SSID}' using '{secrets.PASSWORD}'")
-    wlan.connect(secrets.SSID, secrets.PASSWORD)
+    print(f"\nconnecting to '{wifisecrets.SSID}' using '{wifisecrets.PASSWORD}'")
+    wlan.connect(wifisecrets.SSID, wifisecrets.PASSWORD)
     waited = False
     while not wlan.isconnected() and wlan.status() >= 0:
         print(".", end="")
@@ -162,28 +180,35 @@ def connect_wifi(wlan : network.WLAN) -> None:
 
     if not wlan.isconnected():
         if wlan.status() == network.STAT_WRONG_PASSWORD:
-            raise RuntimeError(f"cannot connect to '{secrets.SSID}' "
-                               "because of authentication problem")
+            raise RuntimeError(
+                f"cannot connect to '{wifisecrets.SSID}' "
+                "because of authentication problem"
+            )
 
         if wlan.status() == network.STAT_NO_AP_FOUND:
-            raise RuntimeError(f"cannot connect to '{secrets.SSID}' "
-                               "because the network is not found")
+            raise RuntimeError(
+                f"cannot connect to '{wifisecrets.SSID}' "
+                "because the network is not found"
+            )
 
         if wlan.status() == network.STAT_CONNECT_FAIL:
-            raise RuntimeError(f"cannot connect to '{secrets.SSID}' "
-                               "status: STAT_CONNECT_FAIL")
+            raise RuntimeError(
+                f"cannot connect to '{wifisecrets.SSID}' status: STAT_CONNECT_FAIL"
+            )
 
-        raise RuntimeError(f"cannot connect to '{secrets.SSID}' "
-                           "status: {wlan.status()}")
+        raise RuntimeError(
+            f"cannot connect to '{wifisecrets.SSID}' status: {wlan.status()}"
+        )
 
     if waited:
         print()
 
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
 
-led=Pin("LED", Pin.OUT)
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
+
+led = Pin("LED", Pin.OUT)
 
 led.on()
 
@@ -238,4 +263,3 @@ print("-------------------------------------------------")
 
 # note: rp2040 can only run wifi related code on core 0?
 webserver()
-
