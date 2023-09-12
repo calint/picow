@@ -6,7 +6,6 @@ import gc
 import ntptime
 import utime
 import socket
-import uos
 from machine import Pin
 
 import secrets
@@ -54,7 +53,8 @@ def get_wifi_status() -> str:
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def webserver_root(path: str, query: str, headers: list[str], sock: socket.socket) -> None:
+def webserver_root(path: str, query: str, headers: list[str],
+                   sock: socket.socket) -> None:
     resp = f"""<!DOCTYPE html><pre>hello from rasberry pico w
 
 path: {path}
@@ -91,7 +91,8 @@ random programming joke:
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def webserver_led(path: str, query: str, headers: list[str], sock: socket.socket) -> None:
+def webserver_led(path: str, query: str, headers: list[str],
+                  sock: socket.socket) -> None:
     led_on = "checked" if "led=1" in query else ""
     led_pin = Pin("LED", Pin.OUT)
     led_pin.on() if led_on !="" else led_pin.off()
@@ -160,15 +161,19 @@ def connect_wifi(wlan : network.WLAN) -> None:
 
     if not wlan.isconnected():
         if wlan.status() == network.STAT_WRONG_PASSWORD:
-            raise RuntimeError(f"cannot connect to '{secrets.SSID}' because of authentication problem")
+            raise RuntimeError(f"cannot connect to '{secrets.SSID}' "
+                               "because of authentication problem")
 
         if wlan.status() == network.STAT_NO_AP_FOUND:
-            raise RuntimeError(f"cannot connect to '{secrets.SSID}' because the network is not found")
+            raise RuntimeError(f"cannot connect to '{secrets.SSID}' "
+                               "because the network is not found")
 
         if wlan.status() == network.STAT_CONNECT_FAIL:
-            raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: STAT_CONNECT_FAIL")
+            raise RuntimeError(f"cannot connect to '{secrets.SSID}' "
+                               "status: STAT_CONNECT_FAIL")
 
-        raise RuntimeError(f"cannot connect to '{secrets.SSID}' status: {wlan.status()}")
+        raise RuntimeError(f"cannot connect to '{secrets.SSID}' "
+                           "status: {wlan.status()}")
 
     if waited:
         print()
@@ -214,6 +219,7 @@ print(get_random_programming_joke())
 print("\ntemperature:")
 print(f"{get_temperature_in_celsius()} °C")
 
+# read and write file
 try:
     file = open("prefs.txt", "r+")
     boot_count = int(file.read())
