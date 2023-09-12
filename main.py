@@ -55,6 +55,7 @@ def get_wifi_status() -> str:
 
 def webserver_root(path: str, query: str, headers: list[str],
                    sock: socket.socket) -> None:
+
     resp = f"""<!DOCTYPE html><pre>hello from rasberry pico w
 
 path: {path}
@@ -93,9 +94,9 @@ random programming joke:
 
 def webserver_led(path: str, query: str, headers: list[str],
                   sock: socket.socket) -> None:
+    
     led_on = "checked" if "led=1" in query else ""
-    led_pin = Pin("LED", Pin.OUT)
-    led_pin.on() if led_on !="" else led_pin.off()
+    led.on() if led_on !="" else led.off()
 
     resp = f"""<!DOCTYPE html><title>LED</title>
 <form>
