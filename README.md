@@ -3,7 +3,7 @@ experiments with raspberry pico w
 
 ```
 # setting up python environment
-python3 -m venv python-env
+python3 -m venv ~/python-env
 
 # setting up visual code environment on ubuntu 23.04
 sudo apt update
@@ -18,6 +18,6 @@ code --install-extension visualstudioexptteam.vscodeintellicode
 code --install-extension paulober.pico-w-go
 code --install-extension charliermarsh.ruff
 
-visual code command to activate extension for project:
+visual code command to activate project for pico-w extension:
    >MicroPico: Configure project
 ```
