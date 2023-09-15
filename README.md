@@ -2,6 +2,9 @@
 experiments with raspberry pico w
 
 ```
+# setting up python environment
+python3 -m venv python-env
+
 # visual code environment setup on ubuntu 23.04
 sudo apt update
 sudo apt install code
