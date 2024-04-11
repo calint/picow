@@ -1,3 +1,8 @@
+# tested with:
+#   UF2 Bootloader v3.0
+#   Model: Raspberry Pi RP2
+#   Board-ID: RPI-RP2
+#   https://micropython.org/download/RPI_PICO_W/RPI_PICO_W-20231005-v1.21.0.uf2
 import sys
 import network
 import urequests
